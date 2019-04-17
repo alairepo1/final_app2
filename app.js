@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const geocode = require('./scripts.js');
 var port = process.env.PORT || 8080;
-// var port = 8080;
+
 //middleware
 var route = express();
 
@@ -40,7 +40,8 @@ route.get('/', (request,response) => {
 route.get('/api_1', async(request,response)=> {
     try{
         response.render('api_1',{
-            jumbo_main: "Application 2"
+            jumbo_main: "Deck Application",
+            jumbo_sec: "Build a deck"
         })
     }catch(err) {
         if (err){
@@ -54,16 +55,23 @@ route.post('/get_deck', async(request, response)=> {
     try{
         var entry = request.body.deck_entry;
         const code = await geocode.getDeck(entry);
-        console.log(code[1].image);
 
         var deck_list = [];
+
         for (var i=0; i< code.length; i++){
             deck_list.push({image: code[i].image})
         }
+
+        var deckChunks = [];
+        var chunkSize = 5;
+        for (var i=0; i< deck_list.length; i+= chunkSize){
+            deckChunks.push(deck_list.slice(i,i+chunkSize))
+        }
+
         response.render('api_1',{
-            jumbo_main: "Currency Converter",
+            jumbo_main: "Deck Application",
             jumbo_sec: "Build a deck",
-            url: deck_list
+            url: deckChunks
         });
     }catch (err){
         if (err){
@@ -71,9 +79,8 @@ route.post('/get_deck', async(request, response)=> {
                 jumbo_main: "Deck App",
                 jumbo_sec: "Could not connect to server."
             })
+            }
         }
-        }
-
 
 });
 
@@ -81,7 +88,6 @@ route.post('/get_image', async(request, response)=> {
     try{
         var entry = request.body.image_entry;
         var imageapi = await geocode.getImage(entry);
-        // console.log(imageapi);
         var images = [];
 
         for (var i=0; i<imageapi.length; i++){
@@ -102,7 +108,7 @@ route.post('/get_image', async(request, response)=> {
     }
 });
 
-//uncomment process.env
+//uncomment process.
 route.listen(port, (request, response) => {
     console.log(`server is up on port ${port}`)
 });
