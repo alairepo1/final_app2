@@ -1,0 +1,17 @@
+
+{{# each products}}
+    <div class="container">
+        <div class="row">
+            {{# each this}}
+                <div class="col mr-2">
+                    <!--Image In here -->
+                    <img src="{{url}}" alt="{{url}}" class="img-thumbnail">
+                    <!--Image end-->
+                </div>
+            {{/each}}
+        </div>
+    </div>
+{{/each}}
+
+
+<img src="{{url}}" alt="{{url}}" class="img-thumbnail" width="500" height="auto">
