@@ -2,8 +2,8 @@ const hbs = require('hbs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const geocode = require('./scripts.js');
-// var port = process.env.PORT || 8080;
-var port = 8080;
+var port = process.env.PORT || 8080;
+// var port = 8080;
 //middleware
 var route = express();
 
@@ -18,17 +18,12 @@ route.use(bodyParser.urlencoded({
 //middleware end
 route.get('/', (request,response) => {
 
-
     try{
-        var images = [{
-            path:"https://www.hotel-belle-juliette-paris.com/images/monuments/tour-eiffel.jpg"
-        },{
-            path: "https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529_960_720.jpg"
-        }];
+
         response.render('index', {
             jumbo_main: "Welcome",
             jumbo_sec: "Image Parser",
-            url: images
+            // url: images
         })
 
     }catch(err){
@@ -55,14 +50,19 @@ route.get('/api_1', async(request,response)=> {
 
 });
 
-route.post('/get_currency', async(request, response)=> {
+route.post('/get_deck', async(request, response)=> {
     try{
-        var entry = request.body.country_entry;
-        const code = await geocode.getCode(entry);
-        const exchange = await geocode.getCurrency(code);
+        var entry = request.body.deck_entry;
+        const code = await geocode.getDeck(entry);
+        console.log(code[1].value);
+
+        var deck_list = [];
+        for (var i=0; i< code.length; i++){
+            deck_list.push(`${code[i].value} of ${code[i].suit} `)
+        }
         response.render('api_1',{
             jumbo_main: "Currency Converter",
-            jumbo_sec: `One USD equals ${exchange.rates} ${Object.keys(exchange.code)} (the currency of "${entry}")`
+            jumbo_sec: deck_list
         });
     }catch (err){
         if (err === "Country does not exist"){
@@ -85,7 +85,32 @@ route.post('/get_currency', async(request, response)=> {
 
 });
 
+route.post('/get_image', async(request, response)=> {
+    try{
+        var entry = request.body.image_entry;
+        var imageapi = await geocode.getImage(entry);
+        // console.log(imageapi);
+        var images = [];
 
+        for (var i=0; i<imageapi.length; i++){
+            images.push({path: imageapi[i].links[0].href});
+        }
+        response.render('index', {
+            jumbo_main: "Welcome",
+            jumbo_sec: "Image Parser",
+            url: images
+        })
+    }catch(err){
+        if (err){
+            response.render('index', {
+                jumbo_main: "Welcome",
+                jumbo_sec: err
+            })
+        }
+    }
+});
+
+//uncomment process.env
 route.listen(port, (request, response) => {
     console.log(`server is up on port ${port}`)
 });

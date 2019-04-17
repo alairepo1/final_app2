@@ -1,35 +1,34 @@
 const request = require('request');
 const axios = require('axios');
 
-var getCode = async(country) => {
+
+var getDeck = async(deck_entry) => {
     try{
-        const code = await axios.get(`https://restcountries.eu/rest/v2/name/${country}?fullText=true`);
-        return code.data[0].currencies[0].code
-    }catch(error) {
-        if (error.response.data.status === 404){
-            throw("Country does not exist")
+        const deck = await axios.get(`https://deckofcardsapi.com/api/deck/new/draw/?count=${deck_entry}`)
+        return deck.data.cards
+    }catch(err){
+        if (err){
+            throw("Error placeholder deck")
         }
     }
 };
 
-
-var getCurrency= async (code) => {
+//Image API
+var getImage = async(search_entry)=>{
     try{
-        const rate = await axios.get(`https://api.exchangeratesapi.io/latest?symbols=${code}&base=USD`);
-        return {
-            code: rate.data.rates,
-            rates: rate.data.rates[code]
-        }
+        const images = await axios.get(`https://images-api.nasa.gov/search?q=${search_entry}`);
+        return images.data.collection.items
     }catch(error){
-        if (error.response.data.error.search("Symbol")){
-            throw ("Symbol does not exist")
-        }else if (error.response.data.error.search("Base")){
-            throw ("Code does not exist")
+        //status codes 200 ok, 400 bad request, 404 not found, 500 server error
+        if (error){
+            throw ("Error placeholder")
         }
     }
 };
 
+
+//Image API end
 module.exports = {
-    getCode,
-    getCurrency
+    getDeck,
+    getImage
 };
