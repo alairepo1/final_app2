@@ -1,11 +1,11 @@
 
-{{# each products}}
+{{# each url}}
     <div class="container">
         <div class="row">
             {{# each this}}
-                <div class="col mr-2">
+                <div class="col">
                     <!--Image In here -->
-                    <img src="{{url}}" alt="{{url}}" class="img-thumbnail">
+                    <a><img src="{{this}}" alt="image" class="img-thumbnail" width="500" height="auto"></a>
                     <!--Image end-->
                 </div>
             {{/each}}
@@ -14,4 +14,3 @@
 {{/each}}
 
 
-<img src="{{url}}" alt="{{url}}" class="img-thumbnail" width="500" height="auto">

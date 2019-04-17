@@ -2,8 +2,8 @@ const hbs = require('hbs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const geocode = require('./scripts.js');
-var port = process.env.PORT || 8080;
-
+// var port = process.env.PORT || 8080;
+var port = 8080;
 //middleware
 var route = express();
 
@@ -17,11 +17,18 @@ route.use(bodyParser.urlencoded({
 }));
 //middleware end
 route.get('/', (request,response) => {
+
+
     try{
+        var images = [{
+            path:"https://www.hotel-belle-juliette-paris.com/images/monuments/tour-eiffel.jpg"
+        },{
+            path: "https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529_960_720.jpg"
+        }];
         response.render('index', {
             jumbo_main: "Welcome",
             jumbo_sec: "Image Parser",
-            url: "https://www.hotel-belle-juliette-paris.com/images/monuments/tour-eiffel.jpg"
+            url: images
         })
 
     }catch(err){
@@ -58,9 +65,20 @@ route.post('/get_currency', async(request, response)=> {
             jumbo_sec: `One USD equals ${exchange.rates} ${Object.keys(exchange.code)} (the currency of "${entry}")`
         });
     }catch (err){
-        if (err){
-            response.render('404', {
-                "message": "Unexpected error"
+        if (err === "Country does not exist"){
+            response.render('api_1', {
+                jumbo_main: "Currency Converter",
+                jumbo_sec: "Country does not exist."
+            })
+        }else if (err === "Symbol does not exist") {
+            response.render('api_1',{
+                jumbo_main: "Currency Converter",
+                jumbo_sec: "Symbol does not exist."
+            })
+        }else if (err === "Code does not exist"){
+            response.render('api_1',{
+                jumbo_main: "Currency Converter",
+                jumbo_sec: "Could not connect to currency api."
             })
         }
     }
