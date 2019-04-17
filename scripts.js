@@ -12,7 +12,24 @@ var getCode = async(country) => {
     }
 };
 
+
+var getCurrency= async (code) => {
+    try{
+        const rate = await axios.get(`https://api.exchangeratesapi.io/latest?symbols=${code}&base=USD`);
+        return {
+            code: rate.data.rates,
+            rates: rate.data.rates[code]
+        }
+    }catch(error){
+        if (error.response.data.error.search("Symbol")){
+            throw ("Symbol does not exist")
+        }else if (error.response.data.error.search("Base")){
+            throw ("Code does not exist")
+        }
+    }
+};
+
 module.exports = {
-    //Refactor
-    getCode
+    getCode,
+    getCurrency
 };

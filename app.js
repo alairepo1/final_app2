@@ -51,10 +51,11 @@ route.get('/api_1', async(request,response)=> {
 route.post('/get_currency', async(request, response)=> {
     try{
         var entry = request.body.country_entry;
-
+        const code = await geocode.getCode(entry);
+        const exchange = await geocode.getCurrency(code);
         response.render('api_1',{
-            jumbo_main: "Application 2",
-            jumbo_sec: `Message to jumbotron secondary text`
+            jumbo_main: "Currency Converter",
+            jumbo_sec: `One USD equals ${exchange.rates} ${Object.keys(exchange.code)} (the currency of "${entry}")`
         });
     }catch (err){
         if (err){
