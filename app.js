@@ -54,34 +54,26 @@ route.post('/get_deck', async(request, response)=> {
     try{
         var entry = request.body.deck_entry;
         const code = await geocode.getDeck(entry);
-        console.log(code[1].value);
+        console.log(code[1].image);
 
         var deck_list = [];
         for (var i=0; i< code.length; i++){
-            deck_list.push(`${code[i].value} of ${code[i].suit} `)
+            deck_list.push({image: code[i].image})
         }
         response.render('api_1',{
             jumbo_main: "Currency Converter",
-            jumbo_sec: deck_list
+            jumbo_sec: "Build a deck",
+            url: deck_list
         });
     }catch (err){
-        if (err === "Country does not exist"){
+        if (err){
             response.render('api_1', {
-                jumbo_main: "Currency Converter",
-                jumbo_sec: "Country does not exist."
-            })
-        }else if (err === "Symbol does not exist") {
-            response.render('api_1',{
-                jumbo_main: "Currency Converter",
-                jumbo_sec: "Symbol does not exist."
-            })
-        }else if (err === "Code does not exist"){
-            response.render('api_1',{
-                jumbo_main: "Currency Converter",
-                jumbo_sec: "Could not connect to currency api."
+                jumbo_main: "Deck App",
+                jumbo_sec: "Could not connect to server."
             })
         }
-    }
+        }
+
 
 });
 
